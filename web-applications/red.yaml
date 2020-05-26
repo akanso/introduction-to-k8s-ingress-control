@@ -1,0 +1,64 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: color-red
+  namespace: applications-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      color: red
+  template:
+    metadata:
+      namespace: applications-namespace
+      labels:
+        run: nginx
+        color: red
+      name: nginx-red
+    spec:
+      volumes:
+      - name: config-volume
+        configMap:
+          name: cm-red-html
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html
+      dnsPolicy: ClusterFirst
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-red-html
+  namespace: applications-namespace
+data:
+  index.html: |-
+    <!DOCTYPE html>
+    <html>
+    <body>
+    <span style='font-size:150px;'>&#128272;</span>
+    <body style="background-color:red;">
+    <h1>This is a password-protected red website</h1>
+    <p>We sell red stuff  &#8680
+    <span style='font-size:50px;'>&#128308;</span>
+    </p>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: applications-namespace
+  name: svc-red
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    color: red
+---

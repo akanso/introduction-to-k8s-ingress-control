@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-default
+  namespace: applications-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      color: none
+  template:
+    metadata:
+      namespace: applications-namespace
+      labels:
+        run: nginx
+        color: none
+      name: nginx-default
+    spec:
+      volumes:
+      - name: config-volume
+        configMap:
+          name: cm-default-html
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html
+      dnsPolicy: ClusterFirst
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-default-html
+  namespace: applications-namespace
+data:
+  index.html: |-
+    <!DOCTYPE html>
+    <html>
+    <body style="background-color:white;">
+    <span style='font-size:100px;'>&#128581;</span>
+    <h1>This is a 404 error  &#128562; </h1>
+    <h1>In layman's terms &#128378: we don't have what you are looking for!</h1>
+    <p>go back and try again &#128281;</p>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: applications-namespace
+  name: default-http-backend
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    color: none
+---

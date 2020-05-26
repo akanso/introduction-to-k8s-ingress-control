@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: color-green
+  namespace: applications-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      color: green
+  template:
+    metadata:
+      namespace: applications-namespace
+      labels:
+        run: nginx
+        color: green
+      name: nginx-green
+    spec:
+      volumes:
+      - name: config-volume
+        configMap:
+          name: cm-green-html
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html
+      dnsPolicy: ClusterFirst
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-green-html
+  namespace: applications-namespace
+data:
+  index.html: |-
+    <!DOCTYPE html>
+    <html>
+    <body style="background-color:green;">
+    <span style='font-size:100px;'>&#127794;</span>
+    <h1>This is a green website</h1>
+    <p>We sell green stuff  &#8680
+    <span style='font-size:100px;'>&#127793;</span>
+    </p>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: applications-namespace
+  name: svc-green
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    color: green
+---

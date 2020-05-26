@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: color-yellow
+  namespace: applications-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      color: yellow
+  template:
+    metadata:
+      namespace: applications-namespace
+      labels:
+        run: nginx
+        color: yellow
+      name: nginx-yellow
+    spec:
+      volumes:
+      - name: config-volume
+        configMap:
+          name: cm-yellow-html
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html
+      dnsPolicy: ClusterFirst
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cm-yellow-html
+  namespace: applications-namespace
+data:
+  index.html: |-
+    <!DOCTYPE html>
+    <html>
+    <body style="background-color:yellow;">
+    <span style='font-size:100px;'>&#128037;</span>
+    <h1>This is a yellow website</h1>
+    <p>We sell yellow stuff  &#8680
+    <span style='font-size:100px;'>&#128155;</span>
+    </body>
+    </html>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: applications-namespace
+  name: svc-yellow
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    color: yellow
+---
