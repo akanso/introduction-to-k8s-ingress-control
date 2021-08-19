@@ -42,7 +42,7 @@ We will deploy our applications in the `applications-namespace` depicted in the 
 
 ## The Ingress resources
 
-We will use two `ingress` resources. The [first one](ingress-resources/ingress-resource.yaml) implements a simple path based routing to the `yellow` and `green` services. The default backend routes traffic to a service called `default-http-backend` in the same namespace.
+We will use two `ingress` resources. The [first one](ingress-resources/ingress-rules.yaml) implements a simple path based routing to the `yellow` and `green` services. The default backend routes traffic to a service called `default-http-backend` in the same namespace.
 
 The [second ingress](ingress-resources/ingress-resource-auth.yaml) requires basic authentication (user/password) to route traffic to the `red` http-server. As a result, it prompts the user to enter the user/password information. This information should match the one stored in a [secret](ingress-resources/secret-auth.yaml) referred to by the [ingress resource](ingress-resources/ingress-resource-auth.yaml).
 
