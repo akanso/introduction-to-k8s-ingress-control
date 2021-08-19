@@ -6,9 +6,10 @@ metadata:
   namespace: ingress-namespace
 spec:
   ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 80
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 30001
   selector:
     name: nginx-ingress
   type: NodePort
